@@ -4,6 +4,7 @@ import Vue from '@vitejs/plugin-vue'
 import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 import ViteFonts from 'unplugin-fonts/vite'
 import VueRouter from 'unplugin-vue-router/vite'
+import mkcert from 'vite-plugin-mkcert'
 
 // Utilities
 import { defineConfig } from 'vite'
@@ -32,6 +33,7 @@ export default defineConfig({
         }],
       },
     }),
+    mkcert()
   ],
   define: { 'process.env': {} },
   resolve: {
