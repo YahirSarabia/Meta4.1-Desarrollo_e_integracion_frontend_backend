@@ -1,19 +1,23 @@
 // Plugins
+import AutoImport from 'unplugin-auto-import/vite'
 import Components from 'unplugin-vue-components/vite'
+import Fonts from 'unplugin-fonts/vite'
+import Layouts from 'vite-plugin-vue-layouts'
 import Vue from '@vitejs/plugin-vue'
-import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
-import ViteFonts from 'unplugin-fonts/vite'
 import VueRouter from 'unplugin-vue-router/vite'
-import mkcert from 'vite-plugin-mkcert'
+import Vuetify, { transformAssetUrls } from 'vite-plugin-vuetify'
 
 // Utilities
 import { defineConfig } from 'vite'
 import { fileURLToPath, URL } from 'node:url'
+import mkcert from'vite-plugin-mkcert'
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     VueRouter(),
+    mkcert(),
+    Layouts(),
     Vue({
       template: { transformAssetUrls }
     }),
@@ -25,7 +29,7 @@ export default defineConfig({
       },
     }),
     Components(),
-    ViteFonts({
+    Fonts({
       google: {
         families: [{
           name: 'Roboto',
@@ -33,8 +37,26 @@ export default defineConfig({
         }],
       },
     }),
-    mkcert()
+    AutoImport({
+      imports: [
+        'vue',
+        'vue-router',
+      ],
+      eslintrc: {
+        enabled: true,
+      },
+      vueTemplate: true,
+    }),
   ],
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://localhost:4000',
+        secure: false, // Acepta certificados autofirmados
+        changeOrigin: true
+      }
+    }
+  },
   define: { 'process.env': {} },
   resolve: {
     alias: {
@@ -49,8 +71,5 @@ export default defineConfig({
       '.tsx',
       '.vue',
     ],
-  },
-  server: {
-    port: 3000,
   },
 })
